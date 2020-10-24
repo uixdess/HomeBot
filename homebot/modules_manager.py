@@ -47,7 +47,7 @@ def register(commands):
 			else:
 				pass
 
-		dispatcher.add_handler(CommandHandler(commands, func))
+		dispatcher.add_handler(CommandHandler(commands, func, run_async=True))
 
 		if type(commands) is list:
 			for command in commands:
