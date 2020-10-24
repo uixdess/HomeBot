@@ -8,6 +8,20 @@ from importlib import import_module
 from pathlib import Path
 from subprocess import Popen, PIPE
 
+error_code = {
+	0: "Build completed successfully",
+	4: "Build failed: Missing arguments or wrong building path",
+	5: "Build failed: Lunching failed",
+	6: "Build failed: Cleaning failed",
+	7: "Build failed: Building failed"
+}
+
+needs_logs_upload = {
+	5: "lunch_log.txt",
+	6: "clean_log.txt",
+	7: "build_log.txt"
+}
+
 def make_ci_post(project_module, device, status, additional_info):
 	text = "🛠 CI | {} ({})\n".format(project_module.name, project_module.android_version)
 	text += "Device: {}\n".format(device)
@@ -52,21 +66,11 @@ def ci_build(update, context):
 							"--clean", clean_type],
 							stdout=PIPE, stderr=PIPE, universal_newlines=True)
 	_, _ = process.communicate()
-	error_code = {
-		0: "Build completed successfully",
-		4: "Build failed: Missing arguments or wrong building path",
-		5: "Build failed: Lunching failed",
-		6: "Build failed: Cleaning failed",
-		7: "Build failed: Building failed"
-	}
+	
 	context.bot.edit_message_text(chat_id=get_config("CI_CHANNEL_ID"), message_id=message_id,
 								  text=make_ci_post(project_module, args.device,
 													error_code.get(process.returncode, "Build failed: Unknown error"), None))
-	needs_logs_upload = {
-		5: "lunch_log.txt",
-		6: "clean_log.txt",
-		7: "build_log.txt"
-	}
+
 	if needs_logs_upload.get(process.returncode, False) != False:
 		log_file = open(Path(get_config("CI_MAIN_DIR")) / project_module.project / needs_logs_upload.get(process.returncode), "rb")
 		context.bot.send_document(get_config("CI_CHANNEL_ID"),
