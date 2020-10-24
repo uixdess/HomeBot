@@ -58,5 +58,6 @@ def weather(update, context):
 			weather_type, weather_type_description,
 			temp, temp_unit, temp_min, temp_unit, temp_max, temp_unit,
 			humidity,
-			wind_speed, wind_unit)
+			wind_speed, wind_unit
 		)
+	)
