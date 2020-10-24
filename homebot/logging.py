@@ -1,5 +1,5 @@
 from inspect import currentframe
-from logging import basicConfig, debug, info, error, INFO
+from logging import basicConfig, debug, info, error, warning, INFO
 
 basicConfig(format='%(asctime)s [%(levelname)s] %(message)s',
 					level=INFO)
@@ -12,3 +12,6 @@ def LOGI(message):
 
 def LOGE(message):
 	error(currentframe().f_back.f_code.co_name + ": " + message)
+
+def LOGW(message):
+	warning(currentframe().f_back.f_code.co_name + ": " + message)

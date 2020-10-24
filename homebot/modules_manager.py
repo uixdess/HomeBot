@@ -1,5 +1,5 @@
 from homebot import bot_path, dispatcher, get_config
-from homebot.logging import LOGE, LOGI, LOGD
+from homebot.logging import LOGE, LOGI, LOGD, LOGW
 from importlib import import_module
 from pkgutil import iter_modules
 from telegram.ext import CommandHandler

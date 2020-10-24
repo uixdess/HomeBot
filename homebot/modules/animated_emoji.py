@@ -1,5 +1,5 @@
 from homebot import get_config
-from homebot.logging import LOGE, LOGI, LOGD
+from homebot.logging import LOGE, LOGI, LOGD, LOGW
 from homebot.modules_manager import register
 
 @register(commands=['basket'])

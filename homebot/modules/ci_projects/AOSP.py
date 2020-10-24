@@ -1,5 +1,5 @@
 from homebot import get_config
-from homebot.logging import LOGE, LOGI, LOGD
+from homebot.logging import LOGE, LOGI, LOGD, LOGW
 
 # Project-specific imports
 import argparse
