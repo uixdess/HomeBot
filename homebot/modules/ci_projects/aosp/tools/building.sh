@@ -34,10 +34,8 @@ while [ "${#}" -gt 0 ]; do
 			shift
 			;;
 		--clean )
-			CI_CLEAN=clean
-			;;
-		--installclean )
-			CI_CLEAN=installclean
+			CI_CLEAN="${2}"
+			shift
 			;;
 		--device )
 			CI_DEVICE="${2}"
@@ -66,7 +64,7 @@ if [ $CI_LUNCH_STATUS != 0 ]; then
 	exit 5
 fi
 
-if [ "$CI_CLEAN" != "" ]; then
+if [ "$CI_CLEAN" != "" ] && [ "$CI_CLEAN" != "none" ]; then
 	mka $CI_CLEAN &> clean_log.txt
 	CI_CLEAN_STATUS=$?
 	if [ $CI_CLEAN_STATUS != 0 ]; then

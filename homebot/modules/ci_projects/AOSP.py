@@ -27,7 +27,15 @@ def ci_build(update, context):
 	parser.add_argument('-d', '--device', help='device codename')
 	parser.add_argument('-ic', '--installclean', help='make installclean before building', action='store_true')
 	parser.add_argument('-c', '--clean', help='make clean before building', action='store_true')
+	parser.set_defaults(clean=False, installclean=False)
 	args = parser.parse_args(update.message.text.split(' ', 2)[2].split())
+
+	if args.clean is True:
+		clean_type = "clean"
+	elif args.installclean is True:
+		clean_type = "installclean"
+	else:
+		clean_type = "none"
 
 	message_id = context.bot.send_message(get_config("CI_CHANNEL_ID"),
 								  make_ci_post(project_module, args.device, "Building", None)).message_id
@@ -40,7 +48,8 @@ def ci_build(update, context):
 							"--build_target", project_module.build_target,
 							"--artifacts", project_module.artifacts,
 							"--device", args.device,
-							"--main_dir", get_config("CI_MAIN_DIR")],
+							"--main_dir", get_config("CI_MAIN_DIR"),
+							"--clean", clean_type],
 							stdout=PIPE, stderr=PIPE, universal_newlines=True)
 	_, _ = process.communicate()
 	error_code = {
