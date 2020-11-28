@@ -18,5 +18,6 @@ def speedtest(update, context):
 	download = str(results_dict["download"] // 10 ** 6)
 	upload = str(results_dict["upload"] // 10 ** 6)
 	context.bot.edit_message_text(chat_id=update.message.chat_id, message_id=message_id,
-								  text="Download: " + download + " mbps\nUpload: " + upload + " mbps")
-	LOGI("Finished, download: " + download + " mbps, upload: " + upload + " mbps")
+								  text="Download: {} mbps\n"
+									   "Upload: {} mbps".format(download, upload))
+	LOGI("Finished, download: {} mbps, upload: {} mbps".format(download, upload))
