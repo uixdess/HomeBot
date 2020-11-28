@@ -18,10 +18,10 @@ def init_modules():
 
 def load_module(module):
 	import_module('homebot.modules.' + module, package="*")
-	LOGI("Loading module " + module + " finished")
+	LOGI("Loading module {} finished".format(module))
 
 def unload_module(module):
-	LOGI("Unloading" + module + "is WIP")
+	LOGI("Unloading {} is WIP".format(module))
 
 def add_command(entry):
 	global commands_list
