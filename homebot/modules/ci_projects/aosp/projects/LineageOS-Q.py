@@ -2,6 +2,8 @@
 project = "LineageOS-17.1"
 # Name to display on Telegram post
 name = "LineageOS 17.1"
+# Name of the parent folder used when uploading
+project_type = "ROMs"
 # Android version to display on Telegram post
 android_version = "10"
 # These next 2 values are needed for lunch (e.g. "lineage"_whyred-"userdebug")

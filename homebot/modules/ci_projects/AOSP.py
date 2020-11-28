@@ -4,6 +4,7 @@ from homebot.logging import LOGE, LOGI, LOGD, LOGW
 # Project-specific imports
 import argparse
 from homebot import bot_path
+from homebot.modules.ci import upload
 from importlib import import_module
 from pathlib import Path
 from subprocess import Popen, PIPE
@@ -31,6 +32,15 @@ def make_ci_post(project_module, device, status, additional_info):
 	text += "\n"
 	if additional_info is not None:
 		text += additional_info
+	return text
+
+def create_artifacts_list(artifacts_list, artifacts_results):
+	text = "Uploaded {} out of {} artifact(s)\n".format(len(artifacts_results), len(artifacts_list))
+	text += "Upload method: {}\n\n".format(get_config("CI_ARTIFACTS_UPLOAD_METHOD"))
+	artifact_index = 1
+	for artifact in artifacts_list:
+		text += "{}) {}: {}\n".format(artifact_index, artifact, artifacts_results.get(artifact, "On queue"))
+		artifact_index = artifact_index + 1
 	return text
 
 def ci_build(update, context):
@@ -76,3 +86,26 @@ def ci_build(update, context):
 		context.bot.send_document(get_config("CI_CHANNEL_ID"),
 									log_file)
 		log_file.close()
+
+	if get_config("CI_UPLOAD_ARTIFACTS") != "true":
+		return
+
+	out_dir = Path("out")
+	device_out_dir = out_dir / "target" / "product" / args.device
+	artifacts_list = []
+	artifacts_results = {}
+
+	for artifact in device_out_dir.glob(project_module.artifacts):
+		artifacts_list += [artifact]
+
+	for artifact in artifacts_list:
+		result = upload(artifact, Path(project_module.project_type / project_module.project / args.device))
+		if result is True:
+			artifacts_results += {artifact: "Upload successful"}
+		else:
+			artifacts_results += {artifact: "Upload failed"}
+		
+		context.bot.edit_message_text(chat_id=get_config("CI_CHANNEL_ID"), message_id=message_id,
+									  text=make_ci_post(project_module, args.device,
+														error_code.get(process.returncode, "Build failed: Unknown error"),
+														create_artifacts_list(artifacts_list, artifacts_results)))
