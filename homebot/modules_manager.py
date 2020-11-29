@@ -1,41 +1,62 @@
 from homebot import bot_path, dispatcher, get_config
 from homebot.logging import LOGE, LOGI, LOGD, LOGW
+
+from ast import parse as parse_module, FunctionDef
 from importlib import import_module
 from pkgutil import iter_modules
 from telegram.ext import CommandHandler
 
 modules_dir = bot_path / "modules"
 
-modules_list = []
-commands_list = []
+modules = []
+commands = []
+
+class Module:
+	"""
+	A class representing a HomeBot module
+	"""
+	def __init__(self, name) -> None:
+		self.name = name
+		filename = modules_dir / (self.name + ".py")
+		file_open = open(filename, "rt")
+		tree = parse_module(file_open.read(), filename=filename)
+		file_open.close()
+		self.functions = [function.name for function in tree.body if isinstance(function, FunctionDef)]
+		LOGI("Commands in module {}: {}".format(self.name, ", ".join(self.functions)))
+
+	def load(self) -> None:
+		LOGI("Loading module {}".format(self.name))
+		self.module = import_module('homebot.modules.' + self.name, package="*")
+		LOGI("Module {} loaded".format(self.name))
+	
+	def unload(self) -> None:
+		LOGI("Unloading {} is WIP".format(self.name))
 
 def init_modules():
-	global modules_list
-	modules_list = [name for _, name, _ in iter_modules([modules_dir])]
-	for module in modules_list:
-		load_module(module)
+	global modules
+	for module in [name for _, name, _ in iter_modules([modules_dir])]:
+		module_class = Module(module)
+		try:
+			module_class.load()
+		except:
+			LOGE("Error loading module {}".format(module))
+		else:
+			modules += [module_class]
 	LOGI("Modules loaded")
 
-def load_module(module):
-	import_module('homebot.modules.' + module, package="*")
-	LOGI("Loading module {} finished".format(module))
-
-def unload_module(module):
-	LOGI("Unloading {} is WIP".format(module))
-
 def add_command(entry):
-	global commands_list
-	commands_list += entry
+	global commands
+	commands += entry
 
 def remove_command(entry):
-	global commands_list
-	commands_list += entry
+	global commands
+	commands += entry
 
 def get_modules_list():
-	return modules_list
+	return modules
 
 def get_commands_list():
-	return commands_list
+	return commands
 
 def register(commands):
 	def decorator(func):
