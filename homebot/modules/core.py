@@ -17,6 +17,7 @@ def modules(update, context):
 	message = "Loaded modules:\n\n"
 	for module in get_modules_list():
 		message += "{}\n".format(module.name)
+		message += "Status: {}\n".format(module.status)
 		message += "Functions: {}\n\n".format(", ".join(module.functions))
 
 	update.message.reply_text(message)
