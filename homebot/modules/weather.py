@@ -48,10 +48,10 @@ def weather(update, context):
 	humidity = response["main"]["humidity"]
 	wind_speed = response["wind"]["speed"]
 	update.message.reply_text(
-		"Current weather for {}, {} ({}, {}):\n" \
-		"Weather: {} ({})\n" \
-		"Temperature: {}{} (Min: {}{} Max: {}{})\n" \
-		"Humidity: {}%\n" \
+		"Current weather for {}, {} ({}, {}):\n"
+		"Weather: {} ({})\n"
+		"Temperature: {}{} (Min: {}{} Max: {}{})\n"
+		"Humidity: {}%\n"
 		"Wind: {}{}"
 		.format(
 			city_name, city_country, city_lat, city_lon,
