@@ -13,5 +13,10 @@ def start(update, context):
 							  "To see all the available modules, type /modules".format(__version__))
 
 @register(commands=['modules'])
-def start(update, context):
-	update.message.reply_text("Loaded modules:\n\n- " + '\n- '.join(get_modules_list()))
+def modules(update, context):
+	message = "Loaded modules:\n\n"
+	for module in get_modules_list():
+		message += "{}\n".format(module.name)
+		message += "Functions: {}\n\n".format(", ".join(module.functions))
+
+	update.message.reply_text(message)
