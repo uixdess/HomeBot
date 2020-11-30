@@ -19,3 +19,7 @@ def dice(update, context):
 @register(commands=['football'])
 def football(update, context):
 	update.message.reply_dice(emoji=Dice.FOOTBALL)
+
+@register(commands=['slotmachine'])
+def slotmachine(update, context):
+	update.message.reply_dice(emoji=Dice.SLOT_MACHINE)
