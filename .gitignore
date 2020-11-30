@@ -84,3 +84,6 @@ dmypy.json
 # editors
 .idea/
 .vscode/
+
+# HomeBot configuration file
+config.env
