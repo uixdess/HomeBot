@@ -23,11 +23,20 @@ class Module:
 		file_open.close()
 		self.functions = [function.name for function in tree.body if isinstance(function, FunctionDef)]
 		LOGI("Commands in module {}: {}".format(self.name, ", ".join(self.functions)))
+		self.status = "Disabled"
 
 	def load(self) -> None:
 		LOGI("Loading module {}".format(self.name))
-		self.module = import_module('homebot.modules.' + self.name, package="*")
-		LOGI("Module {} loaded".format(self.name))
+		self.status = "Starting up"
+		try:
+			self.module = import_module('homebot.modules.' + self.name, package="*")
+		except:
+			LOGE("Error importing module {}".format(self.name))
+			self.status = "Error"
+			raise
+		else:
+			LOGI("Module {} loaded".format(self.name))
+			self.status = "Running"
 	
 	def unload(self) -> None:
 		LOGI("Unloading {} is WIP".format(self.name))
@@ -36,12 +45,8 @@ def init_modules():
 	global modules
 	for module in [name for _, name, _ in iter_modules([modules_dir])]:
 		module_class = Module(module)
-		try:
-			module_class.load()
-		except:
-			LOGE("Error loading module {}".format(module))
-		else:
-			modules += [module_class]
+		module_class.load()
+		modules += [module_class]
 	LOGI("Modules loaded")
 
 def add_command(entry):
