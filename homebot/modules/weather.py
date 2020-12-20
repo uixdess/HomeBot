@@ -1,11 +1,9 @@
 from homebot import get_config
 from homebot.logging import LOGE, LOGI, LOGD, LOGW
-from homebot.modules_manager import register
 
 # Module-specific imports
 import requests
 
-@register(commands=['weather'])
 def weather(update, context):
 	try:
 		city = update.message.text.split(' ', 1)[1]
@@ -61,3 +59,7 @@ def weather(update, context):
 			wind_speed, wind_unit
 		)
 	)
+
+commands = [
+	[weather, ['weather']]
+]

@@ -1,45 +1,64 @@
 from homebot import bot_path, dispatcher, get_config
 from homebot.logging import LOGE, LOGI, LOGD, LOGW
 
-from ast import parse as parse_module, FunctionDef
 from importlib import import_module
 from pkgutil import iter_modules
 from telegram.ext import CommandHandler
+from types import FunctionType
+from typing import List
 
 modules_dir = bot_path / "modules"
 
 modules = []
-commands = []
+
+class Command:
+	"""
+	A class representing a HomeBot command
+	"""
+	def __init__(self, function: FunctionType, commands: list) -> None:
+		self.function = function
+		self.name = self.function.__name__
+		self.commands = commands
+		self.handler = CommandHandler(self.commands, self.function, run_async=True)
 
 class Module:
 	"""
 	A class representing a HomeBot module
 	"""
-	def __init__(self, name) -> None:
+	def __init__(self, name: str) -> None:
 		self.name = name
-		filename = modules_dir / (self.name + ".py")
-		file_open = open(filename, "rt")
-		tree = parse_module(file_open.read(), filename=filename)
-		file_open.close()
-		self.functions = [function.name for function in tree.body if isinstance(function, FunctionDef)]
-		LOGI("Commands in module {}: {}".format(self.name, ", ".join(self.functions)))
+		self.module = import_module('homebot.modules.' + self.name, package="*")
+		self.commands = [Command(command[0], command[1]) for command in self.module.commands]
+		LOGI("Commands in module {}: {}".format(self.name, ", ".join([command.name for command in self.commands])))
 		self.status = "Disabled"
 
 	def load(self) -> None:
 		LOGI("Loading module {}".format(self.name))
 		self.status = "Starting up"
-		try:
-			self.module = import_module('homebot.modules.' + self.name, package="*")
-		except:
-			LOGE("Error importing module {}".format(self.name))
-			self.status = "Error"
-			raise
+		for command in self.commands:
+			try:
+				dispatcher.add_handler(command.handler)
+			except:
+				LOGE("Error enabling module {}, command {}".format(self.name, command))
+				self.status = "Error"
+				raise
 		else:
 			LOGI("Module {} loaded".format(self.name))
 			self.status = "Running"
 	
 	def unload(self) -> None:
-		LOGI("Unloading {} is WIP".format(self.name))
+		LOGI("Unloading module {}".format(self.name))
+		self.status = "Starting up"
+		for command in self.commands:
+			try:
+				dispatcher.remove_handler(command.handler)
+			except:
+				LOGE("Error disabling module {}, command {}".format(self.name, command))
+				self.status = "Error"
+				raise
+		else:
+			LOGI("Module {} unloaded".format(self.name))
+			self.status = "Disabled"
 
 def init_modules():
 	global modules
@@ -49,38 +68,5 @@ def init_modules():
 		modules += [module_class]
 	LOGI("Modules loaded")
 
-def add_command(entry):
-	global commands
-	commands += entry
-
-def remove_command(entry):
-	global commands
-	commands += entry
-
-def get_modules_list():
+def get_modules_list() -> List[Module]:
 	return modules
-
-def get_commands_list():
-	return commands
-
-def register(commands):
-	def decorator(func):
-		async def wrapper(check):
-			try:
-				await func(check)
-			except BaseException as e:
-				LOGE(e)
-			else:
-				pass
-
-		dispatcher.add_handler(CommandHandler(commands, func, run_async=True))
-
-		if type(commands) is list:
-			for command in commands:
-				add_command(command)
-		else:
-			add_command(commands)
-
-		return wrapper
-
-	return decorator

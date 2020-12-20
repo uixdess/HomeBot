@@ -1,11 +1,9 @@
 from homebot import get_config
 from homebot.logging import LOGE, LOGI, LOGD, LOGW
-from homebot.modules_manager import register
 
 # Module-specific imports
 from speedtest import Speedtest
 
-@register(commands=['speedtest'])
 def speedtest(update, context):
 	message_id = update.message.reply_text("Running speedtest...").message_id
 	LOGI("Started")
@@ -21,3 +19,7 @@ def speedtest(update, context):
 								  text="Download: {} mbps\n"
 									   "Upload: {} mbps".format(download, upload))
 	LOGI("Finished, download: {} mbps, upload: {} mbps".format(download, upload))
+
+commands = [
+	[speedtest, ['speedtest']]
+]
