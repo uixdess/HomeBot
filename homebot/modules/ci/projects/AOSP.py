@@ -45,7 +45,7 @@ def create_artifacts_list(artifacts_list, artifacts_results):
 
 def ci_build(update, context):
 	project = update.message.text.split()[2]
-	project_module = import_module('homebot.modules.ci_projects.aosp.projects.' + project, package="*")
+	project_module = import_module('homebot.modules.ci.projects.aosp.projects.' + project, package="*")
 	parser = argparse.ArgumentParser()
 	parser.add_argument('project', help='AOSP project')
 	parser.add_argument('-d', '--device', help='device codename')
@@ -63,7 +63,7 @@ def ci_build(update, context):
 
 	message_id = context.bot.send_message(get_config("CI_CHANNEL_ID"),
 								  make_ci_post(project_module, args.device, "Building", None)).message_id
-	process = Popen([bot_path / "modules" / "ci_projects" / "aosp" / "tools" / "building.sh",
+	process = Popen([bot_path / "modules" / "ci" / "projects" / "aosp" / "tools" / "building.sh",
 							"--project", project_module.project,
 							"--name", project_module.name,
 							"--android_version", project_module.android_version,

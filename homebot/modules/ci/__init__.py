@@ -111,10 +111,10 @@ def ci(update, context):
 		LOGE("CI channel or user ID not defined")
 		return
 	project = update.message.text.split()[1]
-	if not os.path.isfile(bot_path / "modules" / "ci_projects" / (project + ".py")):
+	if not os.path.isfile(bot_path / "modules" / "ci" / "projects" / (project + ".py")):
 		update.message.reply_text("Error: Project script not found")
 		return
-	project_module = import_module('homebot.modules.ci_projects.' + project, package="*")
+	project_module = import_module('homebot.modules.ci.projects.' + project, package="*")
 	LOGI("CI workflow started, project: " + project)
 	project_module.ci_build(update, context)
 	LOGI("CI workflow finished, project: " + project)
