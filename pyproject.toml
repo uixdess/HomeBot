@@ -1,16 +1,16 @@
 [tool.poetry]
 name = "homebot"
-version = "1.0.0"
+version = "2.0.0"
 description = "A Telegram bot written in Python"
 authors = ["Sebastiano Barezzi <barezzisebastiano@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 python-telegram-bot = "^13.1"
-python-dotenv = "^0.14.0"
-cowsay = "^2.0.3"
+python-dotenv = "^0.15.0"
+cowsay = "^3.0"
 speedtest-cli = "^2.1.2"
-requests = "^2.24.0"
+requests = "^2.25.1"
 
 [tool.poetry.dev-dependencies]
 
