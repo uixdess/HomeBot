@@ -11,6 +11,7 @@ python-dotenv = "^0.15.0"
 cowsay = "^3.0"
 speedtest-cli = "^2.1.2"
 requests = "^2.25.1"
+paramiko = "^2.7.2"
 
 [tool.poetry.dev-dependencies]
 
