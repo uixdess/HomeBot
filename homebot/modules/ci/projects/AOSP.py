@@ -101,9 +101,8 @@ def ci_build(update, context):
 													error_code.get(process.returncode, "Build failed: Unknown error"), None))
 
 	if needs_logs_upload.get(process.returncode, False) != False:
-		log_file = open(Path(get_config("CI_MAIN_DIR")) / project_module.project / needs_logs_upload.get(process.returncode), "rb")
-		context.bot.send_document(get_config("CI_CHANNEL_ID"),
-									log_file)
+		log_file = open(project_dir / needs_logs_upload.get(process.returncode), "rb")
+		context.bot.send_document(get_config("CI_CHANNEL_ID"), log_file)
 		log_file.close()
 
 	if get_config("CI_UPLOAD_ARTIFACTS") != "true":
