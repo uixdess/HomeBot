@@ -12,6 +12,8 @@ cowsay = "^3.0"
 speedtest-cli = "^2.1.2"
 requests = "^2.25.1"
 paramiko = "^2.7.2"
+PyGithub = "^1.54.1"
+twrpdtgen = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 
