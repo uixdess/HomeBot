@@ -8,10 +8,11 @@ import os.path
 
 def ci(update, context):
 	if str(update.message.from_user.id) not in get_config("CI_APPROVED_USER_IDS").split():
-		update.message.reply_text("Error: You are not authorized to use CI function of this bot.\nAsk to who host this bot to add you to the authorized people list")
-		LOGI("Access denied to user " + str(update.message.from_user.id))
+		update.message.reply_text("Error: You are not authorized to use CI function of this bot.\n"
+								  "Ask to who host this bot to add you to the authorized people list")
+		LOGI(f"Access denied to user {update.message.from_user.id}")
 		return
-	LOGI("Access granted to user " + str(update.message.from_user.id))
+	LOGI(f"Access granted to user {update.message.from_user.id}")
 	if get_config("CI_CHANNEL_ID") == "":
 		update.message.reply_text("Error: CI channel or user ID not defined")
 		LOGE("CI channel or user ID not defined")
