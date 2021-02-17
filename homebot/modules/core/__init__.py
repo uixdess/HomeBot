@@ -7,23 +7,22 @@ from homebot.core.bot import get_bot_context
 
 def start(update, context):
 	update.message.reply_text("Hi! I'm HomeBot, a bot written in Python by SebaUbuntu\n"
-							  "Version {}\n"
-							  "To see all the available modules, type /modules".format(__version__))
+							  f"Version {__version__}\n"
+							  "To see all the available modules, type /modules")
 
 def modules(update, context):
 	message = "Loaded modules:\n\n"
 	modules = get_bot_context().modules
 	for module in modules:
-		message += "{}\n".format(module.name)
-		message += "Status: {}\n".format(modules[module])
-		message += "Commands: {}\n\n".format(", ".join([command.name for command in module.commands]))
-
+		message += f"{module.name}\n"
+		message += f"Status: {modules[module]}\n"
+		message += f"Commands: {', '.join([command.name for command in module.commands])}\n\n"
 	update.message.reply_text(message)
 
 def load(update, context):
 	if str(update.message.from_user.id) not in get_config("BOT_ADMIN_USER_IDS").split():
 		update.message.reply_text("Error: You are not authorized to load modules")
-		LOGI("Access denied to user " + str(update.message.from_user.id))
+		LOGI(f"Access denied to user {update.message.from_user.id}")
 		return
 
 	try:
@@ -41,7 +40,7 @@ def load(update, context):
 	for module in modules:
 		if module_name == module.name:
 			bot_context.load_module(module)
-			update.message.reply_text("Module {} loaded".format(module_name))
+			update.message.reply_text(f"Module {module_name} loaded")
 			return
 
 	update.message.reply_text("Error: Module not found")
@@ -49,7 +48,7 @@ def load(update, context):
 def unload(update, context):
 	if str(update.message.from_user.id) not in get_config("BOT_ADMIN_USER_IDS").split():
 		update.message.reply_text("Error: You are not authorized to unload modules")
-		LOGI("Access denied to user " + str(update.message.from_user.id))
+		LOGI(f"Access denied to user {update.message.from_user.id}")
 		return
 
 	try:
@@ -67,7 +66,7 @@ def unload(update, context):
 	for module in modules:
 		if module_name == module.name:
 			bot_context.unload_module(module)
-			update.message.reply_text("Module {} unloaded".format(module_name))
+			update.message.reply_text(f"Module {module_name} unloaded")
 			return
 
 	update.message.reply_text("Error: Module not found")
