@@ -11,7 +11,8 @@ def weather(update, context):
 		update.message.reply_text("City not provided")
 		return
 	if get_config("WEATHER_API_KEY", None) == None:
-		update.message.reply_text("OpenWeatherMap API key not specified\nAsk the bot hoster to configure it")
+		update.message.reply_text("OpenWeatherMap API key not specified\n"
+								  "Ask the bot hoster to configure it")
 		LOGE("OpenWeatherMap API key not specified, get it at https://home.openweathermap.org/api_keys")
 		return
 	URL = "https://api.openweathermap.org/data/2.5/weather"
@@ -32,7 +33,7 @@ def weather(update, context):
 	wind_unit = wind_unit.get(get_config("WEATHER_TEMP_UNIT", None), "km/h")
 	response = requests.get(url=URL, params=parameters).json()
 	if response["cod"] != 200:
-		update.message.reply_text("Error: " + response["message"])
+		update.message.reply_text(f"Error: {response['message']}")
 		return
 	city_name = response["name"]
 	city_country = response["sys"]["country"]
