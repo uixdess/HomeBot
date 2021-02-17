@@ -3,7 +3,7 @@ from homebot.logging import LOGE, LOGI, LOGD, LOGW
 
 # Module-specific imports
 from homebot import __version__
-from homebot.core.modules_manager import get_modules_list
+from homebot.core.bot import get_bot_context
 
 def start(update, context):
 	update.message.reply_text("Hi! I'm HomeBot, a bot written in Python by SebaUbuntu\n"
@@ -12,9 +12,10 @@ def start(update, context):
 
 def modules(update, context):
 	message = "Loaded modules:\n\n"
-	for module in get_modules_list():
+	modules = get_bot_context().modules
+	for module in modules:
 		message += "{}\n".format(module.name)
-		message += "Status: {}\n".format(module.status)
+		message += "Status: {}\n".format(modules[module])
 		message += "Commands: {}\n\n".format(", ".join([command.name for command in module.commands]))
 
 	update.message.reply_text(message)
@@ -35,9 +36,11 @@ def load(update, context):
 		update.message.reply_text("Error: You can't load module used for loading/unloading modules")
 		return
 
-	for module in get_modules_list():
+	bot_context = get_bot_context()
+	modules = bot_context.modules
+	for module in modules:
 		if module_name == module.name:
-			module.load()
+			bot_context.load_module(module)
 			update.message.reply_text("Module {} loaded".format(module_name))
 			return
 
@@ -59,9 +62,11 @@ def unload(update, context):
 		update.message.reply_text("Error: You can't unload module used for loading/unloading modules")
 		return
 
-	for module in get_modules_list():
+	bot_context = get_bot_context()
+	modules = bot_context.modules
+	for module in modules:
 		if module_name == module.name:
-			module.unload()
+			bot_context.unload_module(module)
 			update.message.reply_text("Module {} unloaded".format(module_name))
 			return
 

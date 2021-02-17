@@ -1,16 +1,16 @@
-from homebot import updater, get_config
+from homebot import get_config
+from homebot.core.bot import Bot
 from homebot.logging import LOGE, LOGI, LOGD, LOGW
-from homebot.core.modules_manager import init_modules
 
 from homebot import __version__
 
 def main():
-	init_modules()
+	bot = Bot(get_config("BOT_API_TOKEN"))
 	try:
-		updater.bot.get_me().username
+		bot.updater.bot.get_me().username
 	except:
 		LOGE("Failed to connect to Telegram, check your internet connection and/or your bot token")
 		exit()
 	LOGI("HomeBot started, version " + str(__version__))
-	LOGI("Bot username: @" + updater.bot.get_me().username)
-	updater.start_polling()
+	LOGI("Bot username: @" + bot.updater.bot.get_me().username)
+	bot.updater.start_polling()
