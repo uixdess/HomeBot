@@ -29,35 +29,36 @@ class Module:
 		self.name = name
 		self.module = import_module('homebot.modules.' + self.name, package="*")
 		self.commands = [Command(command[0], command[1]) for command in self.module.commands]
-		LOGI("Commands in module {}: {}".format(self.name, ", ".join([command.name for command in self.commands])))
+		commands_names_list = [command.name for command in self.commands]
+		LOGI(f"Commands in module {self.name}: {', '.join(commands_names_list)}")
 		self.status = "Disabled"
 
 	def load(self) -> None:
-		LOGI("Loading module {}".format(self.name))
+		LOGI(f"Loading module {self.name}")
 		self.status = "Starting up"
 		for command in self.commands:
 			try:
 				dispatcher.add_handler(command.handler)
 			except:
-				LOGE("Error enabling module {}, command {}".format(self.name, command))
+				LOGE(f"Error enabling module {self.name}, command {command}")
 				self.status = "Error"
 				raise
 		else:
-			LOGI("Module {} loaded".format(self.name))
+			LOGI(f"Module {self.name} loaded")
 			self.status = "Running"
 	
 	def unload(self) -> None:
-		LOGI("Unloading module {}".format(self.name))
+		LOGI(f"Unloading module {self.name}")
 		self.status = "Starting up"
 		for command in self.commands:
 			try:
 				dispatcher.remove_handler(command.handler)
 			except:
-				LOGE("Error disabling module {}, command {}".format(self.name, command))
+				LOGE(f"Error disabling module {self.name}, command {command}")
 				self.status = "Error"
 				raise
 		else:
-			LOGI("Module {} unloaded".format(self.name))
+			LOGI(f"Module {self.name} unloaded")
 			self.status = "Disabled"
 
 def init_modules():
