@@ -13,7 +13,7 @@ def cowsay(update, context):
 		except IndexError:
 			update.message.reply_text("Error: Write something after the command!")
 		else:
-			update.message.reply_text("`{}`".format(buf.getvalue()), parse_mode="Markdown")
+			update.message.reply_text(f"`{buf.getvalue()}`", parse_mode="Markdown")
 
 commands = [
 	[cowsay, ['cowsay']]
