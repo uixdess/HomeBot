@@ -3,7 +3,7 @@ from homebot.logging import LOGE, LOGI, LOGD, LOGW
 
 # Module-specific imports
 from homebot import __version__
-from homebot.modules_manager import get_modules_list
+from homebot.core.modules_manager import get_modules_list
 
 def start(update, context):
 	update.message.reply_text("Hi! I'm HomeBot, a bot written in Python by SebaUbuntu\n"

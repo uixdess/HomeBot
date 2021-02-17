@@ -1,6 +1,6 @@
 from homebot import updater, get_config
 from homebot.logging import LOGE, LOGI, LOGD, LOGW
-from homebot.modules_manager import init_modules
+from homebot.core.modules_manager import init_modules
 
 from homebot import __version__
 
