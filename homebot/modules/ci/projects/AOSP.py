@@ -80,12 +80,10 @@ def ci_build(update, context):
 								  make_ci_post(project_module, args.device, "Building", None)).message_id
 	process = Popen([bot_path / "modules" / "ci" / "projects" / "aosp" / "tools" / "building.sh",
 							"--project", project_module.project + "-" + project_module.version,
-							"--name", project_module.project + " " + project_module.version,
 							"--android_version", project_module.android_version,
 							"--lunch_prefix", project_module.lunch_prefix,
 							"--lunch_suffix", project_module.lunch_suffix,
 							"--build_target", project_module.build_target,
-							"--artifacts", project_module.artifacts,
 							"--device", args.device,
 							"--main_dir", get_config("CI_MAIN_DIR"),
 							"--clean", clean_type],
