@@ -4,6 +4,18 @@ from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
 # Module-specific imports
 import requests
 
+URL = "https://api.openweathermap.org/data/2.5/weather"
+
+TEMP_UNITS = {
+	"imperial": "F",
+	"metric": "C"
+}
+
+WIND_UNITS = {
+	"imperial": "mph",
+	"metric": "km/h"
+}
+
 def weather(update, context):
 	try:
 		city = update.message.text.split(' ', 1)[1]
@@ -15,22 +27,13 @@ def weather(update, context):
 								  "Ask the bot hoster to configure it")
 		LOGE("OpenWeatherMap API key not specified, get it at https://home.openweathermap.org/api_keys")
 		return
-	URL = "https://api.openweathermap.org/data/2.5/weather"
 	parameters = {
 		"appid": get_config("WEATHER_API_KEY", None),
 		"q": city,
 		"units": get_config("WEATHER_TEMP_UNIT", "metric"),
 	}
-	temp_unit = {
-		"imperial": "F",
-		"metric": "C"
-	}
-	wind_unit = {
-		"imperial": "mph",
-		"metric": "km/h"
-	}
-	temp_unit = temp_unit.get(get_config("WEATHER_TEMP_UNIT", None), "K")
-	wind_unit = wind_unit.get(get_config("WEATHER_TEMP_UNIT", None), "km/h")
+	temp_unit = TEMP_UNITS.get(get_config("WEATHER_TEMP_UNIT", None), "K")
+	wind_unit = WIND_UNITS.get(get_config("WEATHER_TEMP_UNIT", None), "km/h")
 	response = requests.get(url=URL, params=parameters).json()
 	if response["cod"] != 200:
 		update.message.reply_text(f"Error: {response['message']}")
