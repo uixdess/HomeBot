@@ -1,3 +1,5 @@
+"""HomeBot speedtest module."""
+
 from homebot.core.logging import LOGI
 from speedtest import Speedtest
 

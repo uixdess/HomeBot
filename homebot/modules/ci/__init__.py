@@ -1,3 +1,5 @@
+"""HomeBot CI module."""
+
 from homebot import bot_path, get_config
 from homebot.core.logging import LOGE, LOGI
 from importlib import import_module

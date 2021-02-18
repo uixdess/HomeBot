@@ -1,3 +1,5 @@
+"""HomeBot animated emoji module."""
+
 from telegram.dice import Dice
 
 def basket(update, context):

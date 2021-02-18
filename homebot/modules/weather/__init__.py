@@ -1,3 +1,5 @@
+"""HomeBot weather module."""
+
 from homebot import get_config
 from homebot.core.logging import LOGE
 import requests

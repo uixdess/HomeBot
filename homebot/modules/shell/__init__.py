@@ -1,3 +1,5 @@
+"""HomeBot shell module."""
+
 from homebot import get_config
 from homebot.core.logging import LOGI
 import subprocess

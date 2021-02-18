@@ -1,3 +1,5 @@
+"""HomeBot core module."""
+
 from homebot import __version__, get_config
 from homebot.core.bot import get_bot_context
 from homebot.core.logging import LOGI
