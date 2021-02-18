@@ -1,4 +1,5 @@
 from homebot import modules_path
+from homebot.core.error_handler import error_handler
 from homebot.core.modules_manager import Module
 from homebot.logging import LOGE, LOGI, LOGD, LOGW
 from pkgutil import iter_modules
@@ -22,6 +23,7 @@ class Bot:
 		LOGI("Initializing bot")
 		self.updater = Updater(token=token, use_context=True)
 		self.dispatcher = self.updater.dispatcher
+		self.dispatcher.add_error_handler(error_handler, True)
 		self.modules = {}
 		LOGI("Bot initialized")
 
