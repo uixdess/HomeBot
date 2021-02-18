@@ -14,7 +14,7 @@ def get_bot_context():
 
 class Bot:
 	"""
-	HomeBot class
+	This class represent a bot instance.
 	"""
 	def __init__(self, token):
 		"""
