@@ -1,8 +1,6 @@
-from homebot import get_config
+from homebot import __version__, get_config
 from homebot.core.bot import Bot
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
-from homebot import __version__
+from homebot.core.logging import LOGE, LOGI
 
 def main():
 	bot = Bot(get_config("BOT_API_TOKEN"))
