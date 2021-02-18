@@ -1,8 +1,5 @@
-from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
-# Module-specific imports
-from homebot import bot_path
+from homebot import bot_path, get_config
+from homebot.core.logging import LOGE, LOGI
 from importlib import import_module
 import os.path
 

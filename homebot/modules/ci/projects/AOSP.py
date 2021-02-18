@@ -1,8 +1,4 @@
-from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
-# Project-specific imports
-from homebot import bot_path
+from homebot import bot_path, get_config
 from homebot.modules.ci.parser import CIParser
 from homebot.modules.ci.upload import upload
 from importlib import import_module

@@ -1,9 +1,6 @@
-from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
-# Module-specific imports
-from homebot import __version__
+from homebot import __version__, get_config
 from homebot.core.bot import get_bot_context
+from homebot.core.logging import LOGI
 
 def start(update, context):
 	update.message.reply_text("Hi! I'm HomeBot, a bot written in Python by SebaUbuntu\n"

@@ -1,7 +1,5 @@
 from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
-# Module-specific imports
+from homebot.core.logging import LOGE
 import requests
 
 URL = "https://api.openweathermap.org/data/2.5/weather"

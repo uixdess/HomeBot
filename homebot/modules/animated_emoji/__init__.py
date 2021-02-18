@@ -1,6 +1,3 @@
-from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
 from telegram.dice import Dice
 
 def basket(update, context):

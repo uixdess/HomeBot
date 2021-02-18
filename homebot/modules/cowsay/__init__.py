@@ -1,9 +1,5 @@
-from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
-# Module-specific imports
 from contextlib import redirect_stdout
-from cowsay import *
+from cowsay import cow
 import io
 
 def cowsay(update, context):

@@ -1,12 +1,9 @@
-from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-from telegram import Update
-from telegram.ext import CallbackContext
-
-# Project-specific imports
 from github import Github, GithubException
+from homebot import get_config
 from pathlib import Path
 import requests
+from telegram import Update
+from telegram.ext import CallbackContext
 from tempfile import TemporaryDirectory
 from twrpdtgen.device_tree import DeviceTree
 

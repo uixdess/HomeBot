@@ -1,7 +1,4 @@
-from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
-# Module-specific imports
+from homebot.core.logging import LOGI
 from speedtest import Speedtest
 
 def speedtest(update, context):

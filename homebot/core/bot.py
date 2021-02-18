@@ -1,7 +1,7 @@
 from homebot import modules_path
 from homebot.core.error_handler import error_handler
 from homebot.core.modules_manager import Module
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
+from homebot.core.logging import LOGE, LOGI
 from pkgutil import iter_modules
 from telegram.ext import Updater
 

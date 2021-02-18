@@ -1,8 +1,6 @@
-from homebot import get_config
-from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
-
-# Module-specific imports
 from ftplib import FTP, error_perm
+from homebot import get_config
+from homebot.core.logging import LOGI
 import os.path
 import paramiko
 from pathlib import Path
