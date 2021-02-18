@@ -1,5 +1,5 @@
 from homebot import get_config
-from homebot.logging import LOGE, LOGI, LOGD, LOGW
+from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
 
 from telegram.dice import Dice
 

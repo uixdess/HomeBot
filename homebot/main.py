@@ -1,6 +1,6 @@
 from homebot import get_config
 from homebot.core.bot import Bot
-from homebot.logging import LOGE, LOGI, LOGD, LOGW
+from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
 
 from homebot import __version__
 

@@ -1,4 +1,4 @@
-from homebot.logging import LOGE, LOGI, LOGD, LOGW
+from homebot.core.logging import LOGE, LOGI, LOGD, LOGW
 from importlib import import_module
 from telegram.ext import CommandHandler
 from types import FunctionType

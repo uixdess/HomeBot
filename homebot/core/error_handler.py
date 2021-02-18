@@ -1,4 +1,4 @@
-from homebot.logging import LOGE
+from homebot.core.logging import LOGE
 from telegram.ext import CallbackContext
 from telegram.update import Update
 import traceback
