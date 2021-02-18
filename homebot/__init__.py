@@ -1,3 +1,5 @@
+"""Homebot module."""
+
 __version__ = "2.1.0"
 
 from dotenv import load_dotenv
