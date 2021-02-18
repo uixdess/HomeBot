@@ -8,7 +8,7 @@ from github import Github, GithubException
 from pathlib import Path
 import requests
 from tempfile import TemporaryDirectory
-from twrpdtgen.twrp_dt_gen import generate_device_tree
+from twrpdtgen.device_tree import DeviceTree
 
 def ci_build(update: Update, context: CallbackContext):
 	update.message.reply_text("Generation started")
@@ -19,7 +19,7 @@ def ci_build(update: Update, context: CallbackContext):
 	open(file, 'wb').write(requests.get(url, allow_redirects=True).content)
 
 	try:
-		devicetree = generate_device_tree(file, path / "working")
+		devicetree = DeviceTree(path / "working", recovery_image=file)
 	except Exception as e:
 		update.message.reply_text("TWRP device tree generation failed\n"
 								  f"Error: {e}")
