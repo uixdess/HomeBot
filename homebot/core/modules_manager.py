@@ -7,6 +7,9 @@ class Command:
 	A class representing a HomeBot command
 	"""
 	def __init__(self, function: FunctionType, commands: list) -> None:
+		"""
+		Initialize the command class.
+		"""
 		self.function = function
 		self.name = self.function.__name__
 		self.commands = commands
@@ -17,6 +20,9 @@ class Module:
 	A class representing a HomeBot module
 	"""
 	def __init__(self, name: str) -> None:
+		"""
+		Initialize the module class and import its commands.
+		"""
 		self.name = name
 		self.module = import_module('homebot.modules.' + self.name, package="*")
 		self.commands = [Command(command[0], command[1]) for command in self.module.commands]
