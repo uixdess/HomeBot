@@ -1,6 +1,7 @@
 """HomeBot core module."""
 
 from homebot import __version__, get_config
+from homebot.core.admin import user_is_admin
 from homebot.core.bot import get_bot_context
 from homebot.core.logging import LOGI
 
@@ -19,9 +20,8 @@ def modules(update, context):
 	update.message.reply_text(message)
 
 def load(update, context):
-	if str(update.message.from_user.id) not in get_config("BOT_ADMIN_USER_IDS").split():
+	if not user_is_admin(update.message.from_user.id):
 		update.message.reply_text("Error: You are not authorized to load modules")
-		LOGI(f"Access denied to user {update.message.from_user.id}")
 		return
 
 	try:
@@ -45,9 +45,8 @@ def load(update, context):
 	update.message.reply_text("Error: Module not found")
 
 def unload(update, context):
-	if str(update.message.from_user.id) not in get_config("BOT_ADMIN_USER_IDS").split():
+	if not user_is_admin(update.message.from_user.id):
 		update.message.reply_text("Error: You are not authorized to unload modules")
-		LOGI(f"Access denied to user {update.message.from_user.id}")
 		return
 
 	try:

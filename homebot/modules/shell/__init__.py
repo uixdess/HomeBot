@@ -1,15 +1,14 @@
 """HomeBot shell module."""
 
 from homebot import get_config
+from homebot.core.admin import user_is_admin
 from homebot.core.logging import LOGI
 import subprocess
 
 def shell(update, context):
-	if str(update.message.from_user.id) not in get_config("BOT_ADMIN_USER_IDS").split():
+	if not user_is_admin(update.message.from_user.id):
 		update.message.reply_text("Error: You are not authorized to load modules")
-		LOGI(f"Access denied to user {update.message.from_user.id}")
 		return
-	LOGI(f"Access granted to user {update.message.from_user.id}")
 
 	if len(update.message.text.split(' ', 1)) < 2:
 		update.message.reply_text("No command provided")
