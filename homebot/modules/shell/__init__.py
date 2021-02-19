@@ -15,7 +15,7 @@ def shell(update, context):
 		return
 
 	command = update.message.text.split(' ', 1)[1]
-	process = subprocess.Popen(command.split(),
+	process = subprocess.Popen(command.split(), shell=True, executable="/bin/bash",
 							   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 							   universal_newlines=True)
 	stdout, stderr = process.communicate()
