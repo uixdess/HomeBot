@@ -22,7 +22,7 @@ def ci(update, context):
 	parser.add_argument('project', help='CI project')
 
 	args_passed = update.message.text[len("/ci"):].split()
-	args = parser.parse_args(args_passed)
+	args, _ = parser.parse_known_args(args_passed)
 
 	try:
 		project_module = import_module('homebot.modules.ci.projects.' + args.project, package="*")
