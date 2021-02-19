@@ -1,3 +1,5 @@
+"""AOSP building CI module."""
+
 from homebot import bot_path, get_config
 from homebot.modules.ci.parser import CIParser
 from homebot.modules.ci.upload import upload
@@ -47,7 +49,7 @@ def create_artifacts_list(artifacts):
 	return text
 
 def ci_build(update, context):
-	parser = CIParser(prog="/ci AOSP")
+	parser = CIParser(prog="/ci aosp")
 	parser.set_output(update.message.reply_text)
 	parser.add_argument('project', help='AOSP project')
 	parser.add_argument('device', help='device codename')
