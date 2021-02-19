@@ -1,11 +1,10 @@
 """HomeBot CI module."""
 
-from homebot import bot_path, get_config
+from homebot import get_config
 from homebot.core.admin import user_is_admin
 from homebot.core.logging import LOGE, LOGI
 from homebot.modules.ci.parser import CIParser
 from importlib import import_module
-import os.path
 
 def ci(update, context):
 	if not user_is_admin(update.message.from_user.id):
@@ -25,11 +24,11 @@ def ci(update, context):
 	args_passed = update.message.text[len("/ci"):].split()
 	args = parser.parse_args(args_passed)
 
-	if not os.path.isfile(bot_path / "modules" / "ci" / "projects" / (args.project + ".py")):
+	try:
+		project_module = import_module('homebot.modules.ci.projects.' + args.project, package="*")
+	except ImportError:
 		update.message.reply_text("Error: Project script not found")
 		return
-
-	project_module = import_module('homebot.modules.ci.projects.' + args.project, package="*")
 
 	LOGI("CI workflow started, project: " + args.project)
 	project_module.ci_build(update, context)
