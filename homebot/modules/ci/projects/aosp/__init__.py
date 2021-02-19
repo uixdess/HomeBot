@@ -2,24 +2,11 @@
 
 from homebot import bot_path, get_config
 from homebot.modules.ci.parser import CIParser
+from homebot.modules.ci.projects.aosp.constants import ERROR_CODES, NEEDS_LOGS_UPLOAD
 from homebot.modules.ci.upload import upload
 from importlib import import_module
 from pathlib import Path
 from subprocess import Popen, PIPE
-
-error_code = {
-	0: "Build completed successfully",
-	4: "Build failed: Missing arguments or wrong building path",
-	5: "Build failed: Lunching failed",
-	6: "Build failed: Cleaning failed",
-	7: "Build failed: Building failed"
-}
-
-needs_logs_upload = {
-	5: "lunch_log.txt",
-	6: "clean_log.txt",
-	7: "build_log.txt"
-}
 
 def make_ci_post(project_module, device, status, additional_info) -> str:
 	text =  f"🛠 CI | {project_module.project} {project_module.version} ({project_module.android_version})\n"
@@ -94,17 +81,17 @@ def ci_build(update, context):
 
 	context.bot.edit_message_text(chat_id=get_config("CI_CHANNEL_ID"), message_id=message_id,
 								  text=make_ci_post(project_module, args.device,
-													error_code.get(process.returncode, "Build failed: Unknown error"), None))
+													ERROR_CODES.get(process.returncode, "Build failed: Unknown error"), None))
 
-	if needs_logs_upload.get(process.returncode, False) != False:
-		log_file = open(project_dir / needs_logs_upload.get(process.returncode), "rb")
+	if NEEDS_LOGS_UPLOAD.get(process.returncode, False) != False:
+		log_file = open(project_dir / NEEDS_LOGS_UPLOAD.get(process.returncode), "rb")
 		context.bot.send_document(get_config("CI_CHANNEL_ID"), log_file)
 		log_file.close()
 
 	if get_config("CI_UPLOAD_ARTIFACTS") != "true":
 		return
 
-	build_result = error_code.get(process.returncode, "Build failed: Unknown error")
+	build_result = ERROR_CODES.get(process.returncode, "Build failed: Unknown error")
 
 	artifacts = {artifact: "On queue" for artifact in list(device_out_dir.glob(project_module.artifacts))}
 
