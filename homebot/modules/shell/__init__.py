@@ -1,8 +1,6 @@
 """HomeBot shell module."""
 
-from homebot import get_config
 from homebot.core.admin import user_is_admin
-from homebot.core.logging import LOGI
 import subprocess
 
 def shell(update, context):
