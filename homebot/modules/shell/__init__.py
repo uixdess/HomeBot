@@ -15,16 +15,20 @@ def shell(update, context):
 		return
 
 	command = update.message.text.split(' ', 1)[1]
-	process = subprocess.Popen(command.split(), shell=True, executable="/bin/bash",
-							   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-							   universal_newlines=True)
-	stdout, stderr = process.communicate()
+	try:
+		process = subprocess.check_output(command, shell=True, executable="/bin/bash",
+										  stderr=subprocess.STDOUT, universal_newlines=True)
+	except subprocess.CalledProcessError as e:
+		returncode = e.returncode
+		output = e.output
+	else:
+		returncode = 0
+		output = process
+
 	update.message.reply_text(f"Command: {command}\n"
-							  f"Return code: {process.returncode}\n\n"
-							  f"stdout:\n"
-							  f"{stdout}\n"
-							  f"stderr:\n"
-							  f"{stderr}")
+							  f"Return code: {returncode}\n\n"
+							  f"Output:\n"
+							  f"{output}\n")
 
 commands = [
 	[shell, ['shell']]
