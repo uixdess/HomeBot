@@ -1,10 +1,13 @@
 from ftplib import FTP, error_perm
 from homebot import get_config
 from homebot.core.logging import LOGI
+from homebot.modules.ci.artifacts import Artifact
 import os.path
 import paramiko
 from pathlib import Path
 import shutil
+
+ALLOWED_METHODS = ["localcopy", "ftp", "sftp"]
 
 def ftp_chdir(ftp: FTP, remote_directory: Path):
 	if remote_directory == '/':
@@ -36,68 +39,60 @@ def sftp_chdir(sftp: paramiko.SFTPClient, remote_directory: Path):
 		sftp.chdir(basename)
 		return True
 
-def upload(file: Path, destination_path_ci: Path):
+class Uploader:
 	"""
-	Upload an artifact using settings from config.env
-
-	Returns True if the upload went fine,
-	else a string containing an explanation of the error 
+	Uploader class.
 	"""
-	method = get_config("CI_ARTIFACTS_UPLOAD_METHOD")
-	destination_path_base = Path(get_config("CI_UPLOAD_BASE_DIR"))
-	host = get_config("CI_UPLOAD_HOST")
-	port = get_config("CI_UPLOAD_PORT")
-	username = get_config("CI_UPLOAD_USERNAME")
-	password = get_config("CI_UPLOAD_PASSWORD")
+	def __init__(self):
+		"""
+		Initialize the uploader variables.
+		"""
+		self.method = get_config("CI_ARTIFACTS_UPLOAD_METHOD")
+		self.destination_path_base = Path(get_config("CI_UPLOAD_BASE_DIR"))
+		self.host = get_config("CI_UPLOAD_HOST")
+		self.port = get_config("CI_UPLOAD_PORT")
+		self.server = self.host if self.port is None or self.port == "" else f"{self.host}:{self.port}"
+		self.username = get_config("CI_UPLOAD_USERNAME")
+		self.password = get_config("CI_UPLOAD_PASSWORD")
 
-	ALLOWED_METHODS = ["localcopy", "ftp", "sftp"]
-	file_path = Path(file)
-	file_base = file_path.name
+		if self.method not in ALLOWED_METHODS:
+			raise NotImplementedError("Upload method not valid")
 
-	if destination_path_base is None:
-		destination_path = destination_path_ci
-	else:
-		destination_path = destination_path_base / destination_path_ci
+	def upload(self, artifact: Artifact, destination_path_ci: Path):
+		"""
+		Upload an artifact using settings from config.env
 
-	if method not in ALLOWED_METHODS:
-		return "Upload method not valid"
+		Returns True if the upload went fine
+		"""
+		if not artifact.path.is_file():
+			raise FileNotFoundError("File doesn't exists")
 
-	if not file_path.is_file():
-		return "File doesn't exists"
-
-	LOGI("Started uploading of " + file.name)
-
-	if method == "localcopy":
-		os.makedirs(destination_path, exist_ok=True)
-		shutil.copy(file_path, destination_path)
-
-	elif method == "ftp":
-		if port is None or port == "":
-			server = host
+		if self.destination_path_base is None:
+			destination_path = destination_path_ci
 		else:
-			server = host + ":" + port
-		ftp = FTP(server)
-		ftp.login(username, password)
-		ftp_chdir(ftp, destination_path)
-		with open(file_path, 'rb') as f:
-			ftp.storbinary('STOR %s' % file_base, f)
-			f.close()
-		ftp.close()
+			destination_path = self.destination_path_base / destination_path_ci
 
-	elif method == "sftp":
-		if port is None or port == "":
-			server = host
-		else:
-			server = host + ":" + port
-		transport = paramiko.Transport(server)
-		transport.connect(username=username, password=password)
-		sftp = paramiko.SFTPClient.from_transport(transport)
+		LOGI(f"Started uploading of {artifact.path.name}")
 
-		sftp_chdir(sftp, destination_path)
-		sftp.put(file_path, file_base)
+		if self.method == "localcopy":
+			os.makedirs(destination_path, exist_ok=True)
+			shutil.copy(artifact.path, destination_path)
+		elif self.method == "ftp":
+			ftp = FTP(self.server)
+			ftp.login(self.username, self.password)
+			ftp_chdir(ftp, destination_path)
+			with open(artifact.path, 'rb') as f:
+				ftp.storbinary('STOR %s' % artifact.path.name, f)
+				f.close()
+			ftp.close()
+		elif self.method == "sftp":
+			transport = paramiko.Transport(self.server)
+			transport.connect(username=self.username, password=self.password)
+			sftp = paramiko.SFTPClient.from_transport(transport)
+			sftp_chdir(sftp, destination_path)
+			sftp.put(artifact.path, artifact.path.name)
+			sftp.close()
+			transport.close()
 
-		sftp.close()
-		transport.close()
-
-	LOGI("Finished uploading of " + file.name)
-	return True
+		LOGI(f"Finished uploading of {artifact.path.name}")
+		return True

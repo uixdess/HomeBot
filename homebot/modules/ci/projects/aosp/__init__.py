@@ -2,40 +2,17 @@
 
 from homebot import bot_path, get_config
 from homebot.modules.ci.parser import CIParser
-from homebot.modules.ci.projects.aosp.constants import ERROR_CODES, NEEDS_LOGS_UPLOAD
-from homebot.modules.ci.upload import upload
+from homebot.modules.ci.artifacts import Artifacts, STATUS_UPLOADING, STATUS_UPLOADED, STATUS_NOT_UPLOADED
+from homebot.modules.ci.projects.aosp.post import update_ci_post
+from homebot.modules.ci.projects.aosp.project import AOSPProject
+from homebot.modules.ci.projects.aosp.returncode import SUCCESS, ERROR_CODES, NEEDS_LOGS_UPLOAD
+from homebot.modules.ci.upload import Uploader
 from importlib import import_module
 from pathlib import Path
-from subprocess import Popen, PIPE
-
-def make_ci_post(project_module, device, status, additional_info) -> str:
-	text =  f"🛠 CI | {project_module.project} {project_module.version} ({project_module.android_version})\n"
-	text += f"Device: {device}\n"
-	text += f"Lunch flavor: {project_module.lunch_prefix}_{device}-{project_module.lunch_suffix}\n"
-	text += "\n"
-	text += f"Status: {status}\n"
-	text += "\n"
-	if additional_info is not None:
-		text += additional_info
-	return text
-
-def create_artifacts_list(artifacts):
-	upload_method = get_config("CI_ARTIFACTS_UPLOAD_METHOD")
-	artifact_total = len(artifacts)
-	artifact_uploaded = 0
-	for artifact in artifacts:
-		artifact_uploaded += 1
-
-	text =  f"Uploaded {artifact_uploaded} out of {artifact_total} artifact(s)\n"
-	text += f"Upload method: {upload_method}\n\n"
-	artifact_index = 1
-	for artifact in artifacts:
-		artifact_result = artifacts.get(artifact, "On queue")
-		text += f"{artifact_index}) {artifact.name}: {artifact_result}\n"
-		artifact_index = artifact_index + 1
-	return text
+import subprocess
 
 def ci_build(update, context):
+	# Parse arguments
 	parser = CIParser(prog="/ci aosp")
 	parser.set_output(update.message.reply_text)
 	parser.add_argument('project', help='AOSP project')
@@ -47,16 +24,16 @@ def ci_build(update, context):
 	try:
 		args_passed = update.message.text.split(' ', 2)[2].split()
 	except IndexError:
-		args_passed = ""
+		args_passed = []
 
 	args = parser.parse_args(args_passed)
 
-	project_module = import_module('homebot.modules.ci.projects.aosp.projects.' + args.project, package="*")
+	# Import project
+	project: AOSPProject
+	project = import_module('homebot.modules.ci.projects.aosp.projects.' + args.project, package="*").project
 
-	projects_dir = Path(get_config("CI_MAIN_DIR"))
-	project_dir = projects_dir / (project_module.project + "-" + project_module.version)
-	out_dir = project_dir / "out"
-	device_out_dir = out_dir / "target" / "product" / args.device
+	project_dir = Path(f"{get_config('CI_MAIN_DIR')}/{project.name}-{project.version}")
+	device_out_dir = project_dir / "out" / "target" / "product" / args.device
 
 	if args.clean is True:
 		clean_type = "clean"
@@ -65,52 +42,59 @@ def ci_build(update, context):
 	else:
 		clean_type = "none"
 
-	message_id = context.bot.send_message(get_config("CI_CHANNEL_ID"),
-								  make_ci_post(project_module, args.device, "Building", None)).message_id
-	process = Popen([bot_path / "modules" / "ci" / "projects" / "aosp" / "tools" / "building.sh",
-							"--project", project_module.project + "-" + project_module.version,
-							"--android_version", project_module.android_version,
-							"--lunch_prefix", project_module.lunch_prefix,
-							"--lunch_suffix", project_module.lunch_suffix,
-							"--build_target", project_module.build_target,
-							"--device", args.device,
-							"--main_dir", get_config("CI_MAIN_DIR"),
-							"--clean", clean_type],
-							stdout=PIPE, stderr=PIPE, universal_newlines=True)
-	_, _ = process.communicate()
+	message_id = update_ci_post(context, None, project, args.device, "Building")
 
-	context.bot.edit_message_text(chat_id=get_config("CI_CHANNEL_ID"), message_id=message_id,
-								  text=make_ci_post(project_module, args.device,
-													ERROR_CODES.get(process.returncode, "Build failed: Unknown error"), None))
+	command = [bot_path / "modules" / "ci" / "projects" / "aosp" / "tools" / "building.sh",
+			   "--sources", project_dir,
+			   "--lunch_prefix", project.lunch_prefix,
+			   "--lunch_suffix", project.lunch_suffix,
+			   "--build_target", project.build_target,
+			   "--clean", clean_type,
+			   "--device", args.device]
 
-	if NEEDS_LOGS_UPLOAD.get(process.returncode, False) != False:
-		log_file = open(project_dir / NEEDS_LOGS_UPLOAD.get(process.returncode), "rb")
+	try:
+		subprocess.check_output(command, stderr=subprocess.STDOUT, universal_newlines=True)
+	except subprocess.CalledProcessError as e:
+		returncode = e.returncode
+	else:
+		returncode = SUCCESS
+
+	# Process return code
+	build_result = ERROR_CODES.get(returncode, "Build failed: Unknown error")
+
+	update_ci_post(context, message_id, project, args.device, build_result)
+
+	needs_logs_upload = NEEDS_LOGS_UPLOAD.get(returncode, False)
+	if needs_logs_upload != False:
+		log_file = open(project_dir / needs_logs_upload, "rb")
 		context.bot.send_document(get_config("CI_CHANNEL_ID"), log_file)
 		log_file.close()
 
-	if get_config("CI_UPLOAD_ARTIFACTS") != "true":
+	if returncode != SUCCESS or get_config("CI_UPLOAD_ARTIFACTS") != "true":
 		return
 
-	build_result = ERROR_CODES.get(process.returncode, "Build failed: Unknown error")
+	# Upload artifacts
+	try:
+		uploader = Uploader()
+	except Exception as e:
+		update_ci_post(context, message_id, project, args.device,
+					   f"{build_result}\n"
+					   f"Upload failed: {type(e)}: {e}")
+		return
 
-	artifacts = {artifact: "On queue" for artifact in list(device_out_dir.glob(project_module.artifacts))}
+	artifacts = Artifacts(device_out_dir, project.artifacts)
 
-	context.bot.edit_message_text(chat_id=get_config("CI_CHANNEL_ID"), message_id=message_id,
-								  text=make_ci_post(project_module, args.device, build_result,
-													create_artifacts_list(artifacts)))
+	update_ci_post(context, message_id, project, args.device, build_result, artifacts=artifacts)
 
-	for artifact in artifacts:
-		artifacts[artifact] = "Uploading"
-		context.bot.edit_message_text(chat_id=get_config("CI_CHANNEL_ID"), message_id=message_id,
-									  text=make_ci_post(project_module, args.device, build_result,
-														create_artifacts_list(artifacts)))
+	for artifact in artifacts.artifacts:
+		artifact.status = STATUS_UPLOADING
+		update_ci_post(context, message_id, project, args.device, build_result, artifacts=artifacts)
 
-		result = upload(artifact, Path(project_module.project_type) / args.device / project_module.project / project_module.android_version)
-		if result is True:
-			artifacts[artifact] = "Upload successful"
+		try:
+			uploader.upload(artifact, Path(project.category) / args.device / project.name / project.android_version)
+		except Exception as e:
+			artifact.status = f"{STATUS_NOT_UPLOADED}: {type(e)}: {e}"
 		else:
-			artifacts[artifact] = "Upload failed"
+			artifact.status = STATUS_UPLOADED
 
-		context.bot.edit_message_text(chat_id=get_config("CI_CHANNEL_ID"), message_id=message_id,
-									  text=make_ci_post(project_module, args.device, build_result,
-														create_artifacts_list(artifacts)))
+		update_ci_post(context, message_id, project, args.device, build_result, artifacts=artifacts)
