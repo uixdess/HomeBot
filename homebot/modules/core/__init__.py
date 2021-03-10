@@ -8,7 +8,7 @@ from telegram.ext import CallbackContext
 from telegram.update import Update
 
 def start(update: Update, context: CallbackContext):
-	update.message.reply_text("Hi! I'm HomeBot, a bot written in Python by SebaUbuntu\n"
+	update.message.reply_text("Hi! I'm HomeBot, and I'm alive\n"
 							  f"Version {__version__}\n"
 							  "To see all the available modules, type /modules")
 
