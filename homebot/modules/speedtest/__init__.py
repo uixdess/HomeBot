@@ -2,8 +2,10 @@
 
 from homebot.core.logging import LOGI
 from speedtest import Speedtest
+from telegram.ext import CallbackContext
+from telegram.update import Update
 
-def speedtest(update, context):
+def speedtest(update: Update, context: CallbackContext):
 	message_id = update.message.reply_text("Running speedtest...").message_id
 	LOGI("Started")
 	speedtest = Speedtest()

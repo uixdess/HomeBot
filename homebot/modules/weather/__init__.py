@@ -3,6 +3,8 @@
 from homebot import get_config
 from homebot.core.logging import LOGE
 import requests
+from telegram.ext import CallbackContext
+from telegram.update import Update
 
 URL = "https://api.openweathermap.org/data/2.5/weather"
 
@@ -16,7 +18,7 @@ WIND_UNITS = {
 	"metric": "km/h"
 }
 
-def weather(update, context):
+def weather(update: Update, context: CallbackContext):
 	try:
 		city = update.message.text.split(' ', 1)[1]
 	except IndexError:

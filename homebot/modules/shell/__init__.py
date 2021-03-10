@@ -2,8 +2,10 @@
 
 from homebot.core.admin import user_is_admin
 import subprocess
+from telegram.ext import CallbackContext
+from telegram.update import Update
 
-def shell(update, context):
+def shell(update: Update, context: CallbackContext):
 	if not user_is_admin(update.message.from_user.id):
 		update.message.reply_text("Error: You are not authorized to load modules")
 		return

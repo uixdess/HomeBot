@@ -4,13 +4,15 @@ from homebot import __version__, get_config
 from homebot.core.admin import user_is_admin
 from homebot.core.bot import get_bot_context
 from homebot.core.logging import LOGI
+from telegram.ext import CallbackContext
+from telegram.update import Update
 
-def start(update, context):
+def start(update: Update, context: CallbackContext):
 	update.message.reply_text("Hi! I'm HomeBot, a bot written in Python by SebaUbuntu\n"
 							  f"Version {__version__}\n"
 							  "To see all the available modules, type /modules")
 
-def modules(update, context):
+def modules(update: Update, context: CallbackContext):
 	message = "Loaded modules:\n\n"
 	modules = get_bot_context().modules
 	for module in modules:
@@ -19,7 +21,7 @@ def modules(update, context):
 		message += f"Commands: {', '.join([command.name for command in module.commands])}\n\n"
 	update.message.reply_text(message)
 
-def load(update, context):
+def load(update: Update, context: CallbackContext):
 	if not user_is_admin(update.message.from_user.id):
 		update.message.reply_text("Error: You are not authorized to load modules")
 		return
@@ -44,7 +46,7 @@ def load(update, context):
 
 	update.message.reply_text("Error: Module not found")
 
-def unload(update, context):
+def unload(update: Update, context: CallbackContext):
 	if not user_is_admin(update.message.from_user.id):
 		update.message.reply_text("Error: You are not authorized to unload modules")
 		return

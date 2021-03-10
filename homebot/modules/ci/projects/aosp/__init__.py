@@ -10,8 +10,10 @@ from homebot.modules.ci.upload import Uploader
 from importlib import import_module
 from pathlib import Path
 import subprocess
+from telegram.ext import CallbackContext
+from telegram.update import Update
 
-def ci_build(update, context):
+def ci_build(update: Update, context: CallbackContext):
 	# Parse arguments
 	parser = CIParser(prog="/ci aosp")
 	parser.set_output(update.message.reply_text)
