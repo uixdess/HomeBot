@@ -19,10 +19,10 @@ def football(update: Update, context: CallbackContext):
 def slotmachine(update: Update, context: CallbackContext):
 	update.message.reply_dice(emoji=Dice.SLOT_MACHINE)
 
-commands = [
-	[basket, ['basket']],
-	[dart, ['dart']],
-	[dice, ['dice']],
-	[football, ['football']],
-	[slotmachine, ['slotmachine']]
-]
+commands = {
+	basket: ['basket'],
+	dart: ['dart'],
+	dice: ['dice'],
+	football: ['football'],
+	slotmachine: ['slotmachine']
+}

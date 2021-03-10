@@ -25,4 +25,4 @@ class Module:
 		"""
 		self.name = name
 		self.module = import_module('homebot.modules.' + self.name, package="*")
-		self.commands = [Command(command[0], command[1]) for command in self.module.commands]
+		self.commands = [Command(command, self.module.commands[command]) for command in self.module.commands]

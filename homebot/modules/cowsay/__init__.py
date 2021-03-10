@@ -15,6 +15,6 @@ def cowsay(update: Update, context: CallbackContext):
 		else:
 			update.message.reply_text(f"`{buf.getvalue()}`", parse_mode="Markdown")
 
-commands = [
-	[cowsay, ['cowsay']]
-]
+commands = {
+	cowsay: ['cowsay']
+}

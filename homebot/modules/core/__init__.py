@@ -71,9 +71,9 @@ def unload(update: Update, context: CallbackContext):
 
 	update.message.reply_text("Error: Module not found")
 
-commands = [
-	[start, ['start', 'help']],
-	[modules, ['modules']],
-	[load, ['load']],
-	[unload, ['unload']]
-]
+commands = {
+	start: ['start', 'help'],
+	modules: ['modules'],
+	load: ['load'],
+	unload: ['unload']
+}

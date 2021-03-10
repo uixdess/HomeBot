@@ -59,6 +59,6 @@ def weather(update: Update, context: CallbackContext):
 		f"Wind: {wind_speed}{wind_unit}"
 	)
 
-commands = [
-	[weather, ['weather']]
-]
+commands = {
+	weather: ['weather']
+}

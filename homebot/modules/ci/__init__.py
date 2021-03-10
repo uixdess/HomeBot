@@ -36,6 +36,6 @@ def ci(update: Update, context: CallbackContext):
 	project_module.ci_build(update, context)
 	LOGI("CI workflow finished, project: " + args.project)
 
-commands = [
-	[ci, ["ci"]]
-]
+commands = {
+	ci: ['ci']
+}

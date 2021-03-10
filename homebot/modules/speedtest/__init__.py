@@ -21,6 +21,6 @@ def speedtest(update: Update, context: CallbackContext):
 									   f"Upload: {upload} mbps")
 	LOGI(f"Finished, download: {download} mbps, upload: {upload} mbps")
 
-commands = [
-	[speedtest, ['speedtest']]
-]
+commands = {
+	speedtest: ['speedtest']
+}

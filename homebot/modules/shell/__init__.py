@@ -30,6 +30,6 @@ def shell(update: Update, context: CallbackContext):
 							  f"Output:\n"
 							  f"{output}\n")
 
-commands = [
-	[shell, ['shell']]
-]
+commands = {
+	shell: ['shell']
+}
