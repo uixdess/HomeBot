@@ -1,16 +1,7 @@
-from homebot import modules_path
+from homebot import modules
 from homebot.core.error_handler import error_handler
-from homebot.core.modules_manager import Module
 from homebot.core.logging import LOGE, LOGI
-from pkgutil import iter_modules
 from telegram.ext import Updater
-
-# TODO: Find a better way to provide
-# modules status to modules itself
-bot = None
-
-def get_bot_context():
-	return bot
 
 class Bot:
 	"""
@@ -24,18 +15,18 @@ class Bot:
 		self.updater = Updater(token=token, use_context=True)
 		self.dispatcher = self.updater.dispatcher
 		self.dispatcher.add_error_handler(error_handler, True)
-		self.modules = {}
+		self.modules = []
 		LOGI("Bot initialized")
 
 		LOGI("Parsing modules")
-		for module in [name for _, name, _ in iter_modules([modules_path])]:
+		for module in modules:
 			try:
-				module = Module(module)
+				module_instance = module(self)
 			except Exception as e:
-				LOGE(f"Error loading module {module}, will be skipped\n"
+				LOGE(f"Error initializing module {module.name}, will be skipped\n"
 					 f"Error: {e}")
 			else:
-				self.modules[module] = "Disabled"
+				self.modules.append(module_instance)
 		LOGI("Modules parsed")
 
 		LOGI("Loading modules")
@@ -43,35 +34,30 @@ class Bot:
 			self.load_module(module)
 		LOGI("Modules loaded")
 
-		# TODO: Find a better way to provide
-		# modules status to modules itself
-		global bot
-		bot = self
-
-	def load_module(self, module: Module):
+	def load_module(self, module):
 		"""
 		Load a provided module and add its command handler
 		to the bot's dispatcher.
 		"""
 		LOGI(f"Loading module {module.name}")
-		self.modules[module] = "Starting up"
+		module.set_status("Starting up")
 
 		for command in module.commands:
 			self.dispatcher.add_handler(command.handler)
 
-		self.modules[module] = "Running"
+		module.set_status("Running")
 		LOGI(f"Module {module.name} loaded")
 
-	def unload_module(self, module: Module):
+	def unload_module(self, module):
 		"""
 		Unload a provided module and remove its command handler
 		from the bot's dispatcher.
 		"""
 		LOGI(f"Unloading module {module.name}")
-		self.modules[module] = "Stopping"
+		module.set_status("Stopping")
 
 		for command in module.commands:
 			self.dispatcher.remove_handler(command.handler)
 
+		module.set_status("Disabled")
 		LOGI(f"Module {module.name} unloaded")
-		self.modules[module] = "Disabled"

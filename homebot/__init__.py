@@ -9,6 +9,8 @@ from pathlib import Path
 bot_path = Path(__file__).parent
 modules_path = bot_path / "modules"
 
+modules = []
+
 get_config = os.environ.get
 
 load_dotenv("config.env")
