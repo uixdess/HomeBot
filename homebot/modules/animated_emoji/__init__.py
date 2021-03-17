@@ -13,6 +13,9 @@ class Module(ModuleBase):
 	def basket(self, update: Update, context: CallbackContext):
 		update.message.reply_dice(emoji=Dice.BASKETBALL)
 
+	def bowling(self, update: Update, context: CallbackContext):
+		update.message.reply_dice(emoji=Dice.BOWLING)
+
 	def dart(self, update: Update, context: CallbackContext):
 		update.message.reply_dice(emoji=Dice.DARTS)
 
@@ -27,6 +30,7 @@ class Module(ModuleBase):
 
 	commands = {
 		basket: ['basket'],
+		bowling: ['bowling'],
 		dart: ['dart'],
 		dice: ['dice'],
 		football: ['football'],
