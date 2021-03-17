@@ -1,35 +1,41 @@
 """HomeBot shell module."""
 
 from homebot.core.admin import user_is_admin
+from homebot.core.modules_manager import ModuleBase
 import subprocess
 from telegram.ext import CallbackContext
 from telegram.update import Update
 
-def shell(update: Update, context: CallbackContext):
-	if not user_is_admin(update.message.from_user.id):
-		update.message.reply_text("Error: You are not authorized to load modules")
-		return
+class Module(ModuleBase):
+	name = "shell"
+	description = "Send a command in a local terminal"
+	version = "1.0.0"
 
-	if len(update.message.text.split(' ', 1)) < 2:
-		update.message.reply_text("No command provided")
-		return
+	def shell(update: Update, context: CallbackContext):
+		if not user_is_admin(update.message.from_user.id):
+			update.message.reply_text("Error: You are not authorized to load modules")
+			return
 
-	command = update.message.text.split(' ', 1)[1]
-	try:
-		process = subprocess.check_output(command, shell=True, executable="/bin/bash",
-										  stderr=subprocess.STDOUT, universal_newlines=True)
-	except subprocess.CalledProcessError as e:
-		returncode = e.returncode
-		output = e.output
-	else:
-		returncode = 0
-		output = process
+		if len(update.message.text.split(' ', 1)) < 2:
+			update.message.reply_text("No command provided")
+			return
 
-	update.message.reply_text(f"Command: {command}\n"
-							  f"Return code: {returncode}\n\n"
-							  f"Output:\n"
-							  f"{output}\n")
+		command = update.message.text.split(' ', 1)[1]
+		try:
+			process = subprocess.check_output(command, shell=True, executable="/bin/bash",
+											  stderr=subprocess.STDOUT, universal_newlines=True)
+		except subprocess.CalledProcessError as e:
+			returncode = e.returncode
+			output = e.output
+		else:
+			returncode = 0
+			output = process
 
-commands = {
-	shell: ['shell']
-}
+		update.message.reply_text(f"Command: {command}\n"
+								  f"Return code: {returncode}\n\n"
+								  f"Output:\n"
+								  f"{output}\n")
+
+	commands = {
+		shell: ['shell']
+	}
