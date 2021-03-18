@@ -9,6 +9,6 @@ def error_handler(update: Update, context: CallbackContext):
 	formatted_error +=  ''.join(traceback.format_exception(type(context.error), context.error,
 														   context.error.__traceback__,
 														   limit=None, chain=True))
-	update.message.reply_text(formatted_error)
 	LOGE(formatted_error)
+	update.message.reply_text(formatted_error)
 	LOGE("End error handling")
