@@ -1,5 +1,5 @@
 from homebot import modules_path
-from homebot.core.bot import Bot
+from homebot.core.bot import HomeBot
 from homebot.core.logging import LOGE
 from importlib import import_module
 from pkgutil import iter_modules
@@ -49,7 +49,7 @@ class ModuleBase:
 	version: str
 	commands: dict
 
-	def __init__(self, bot: Bot) -> None:
+	def __init__(self, bot: HomeBot) -> None:
 		"""
 		Initialize the module class and import its commands.
 		"""

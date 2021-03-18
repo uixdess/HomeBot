@@ -3,7 +3,7 @@ from homebot.core.error_handler import error_handler
 from homebot.core.logging import LOGE, LOGI
 from telegram.ext import Updater
 
-class Bot:
+class HomeBot:
 	"""
 	This class represent a bot instance.
 	"""
