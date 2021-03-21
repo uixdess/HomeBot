@@ -14,7 +14,7 @@ class Module(ModuleBase):
 	description = "A module that let you trigger actions with a single Telegram message"
 	version = "1.0.0"
 
-	def ci(self, update: Update, context: CallbackContext):
+	def ci(update: Update, context: CallbackContext):
 		if not user_is_admin(update.message.from_user.id):
 			update.message.reply_text("Error: You are not authorized to use CI function of this bot.\n"
 									  "Ask to who host this bot to add you to the authorized people list")

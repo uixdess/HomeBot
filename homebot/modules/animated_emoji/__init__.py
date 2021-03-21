@@ -10,22 +10,22 @@ class Module(ModuleBase):
 	description = "Send animated emojis with a single command"
 	version = "1.0.0"
 
-	def basket(self, update: Update, context: CallbackContext):
+	def basket(update: Update, context: CallbackContext):
 		update.message.reply_dice(emoji=Dice.BASKETBALL)
 
-	def bowling(self, update: Update, context: CallbackContext):
+	def bowling(update: Update, context: CallbackContext):
 		update.message.reply_dice(emoji=Dice.BOWLING)
 
-	def dart(self, update: Update, context: CallbackContext):
+	def dart(update: Update, context: CallbackContext):
 		update.message.reply_dice(emoji=Dice.DARTS)
 
-	def dice(self, update: Update, context: CallbackContext):
+	def dice(update: Update, context: CallbackContext):
 		update.message.reply_dice(emoji=Dice.DICE)
 
-	def football(self, update: Update, context: CallbackContext):
+	def football(update: Update, context: CallbackContext):
 		update.message.reply_dice(emoji=Dice.FOOTBALL)
 
-	def slotmachine(self, update: Update, context: CallbackContext):
+	def slotmachine(update: Update, context: CallbackContext):
 		update.message.reply_dice(emoji=Dice.SLOT_MACHINE)
 
 	commands = {

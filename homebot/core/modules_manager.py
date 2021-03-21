@@ -1,5 +1,4 @@
 from homebot import modules_path
-from homebot.core.bot import HomeBot
 from homebot.core.logging import LOGE
 from importlib import import_module
 from pkgutil import iter_modules
@@ -22,14 +21,13 @@ class Command:
 	"""
 	A class representing a HomeBot command
 	"""
-	def __init__(self, module, function: FunctionType, commands: list) -> None:
+	def __init__(self, function: FunctionType, commands: list) -> None:
 		"""
 		Initialize the command class.
 		"""
 		self.name = function.__name__
-		self.module = module
 		self.commands = commands
-		self.function = lambda update, context: function(self.module, update, context)
+		self.function = function
 		self.handler = CommandHandler(self.commands, self.function, run_async=True)
 
 class ModuleBase:
@@ -49,16 +47,15 @@ class ModuleBase:
 	version: str
 	commands: dict
 
-	def __init__(self, bot: HomeBot) -> None:
+	def __init__(self) -> None:
 		"""
 		Initialize the module class and import its commands.
 		"""
 		if type(self) is ModuleBase:
 			raise TypeError("You can't initialize a ModuleBase, it can only be used as a superclass")
 
-		self.bot = bot
 		self.status = "Disabled"
-		self.commands = [Command(self, function, commands) for function, commands in self.commands.items()]
+		self.commands = [Command(function, commands) for function, commands in self.commands.items()]
 
 	def set_status(self, status: str) -> None:
 		"""
