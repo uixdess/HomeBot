@@ -1,8 +1,7 @@
 """HomeBot core module."""
 
-from homebot import __version__, get_config
+from homebot import __version__
 from homebot.core.admin import user_is_admin
-from homebot.core.logging import LOGI
 from homebot.core.modules_manager import ModuleBase
 from telegram.ext import CallbackContext
 from telegram.update import Update
