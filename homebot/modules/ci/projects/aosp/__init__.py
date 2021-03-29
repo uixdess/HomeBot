@@ -32,7 +32,7 @@ def ci_build(update: Update, context: CallbackContext):
 
 	# Import project
 	project: AOSPProject
-	project = import_module('homebot.modules.ci.projects.aosp.projects.' + args.project, package="*").project
+	project = import_module(f"homebot.modules.ci.projects.aosp.projects.{args.project}", package="*").project
 
 	project_dir = Path(f"{get_config('CI_MAIN_DIR')}/{project.name}-{project.version}")
 	device_out_dir = project_dir / "out" / "target" / "product" / args.device
