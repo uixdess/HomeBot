@@ -33,7 +33,7 @@ class Module(ModuleBase):
 		args, _ = parser.parse_known_args(args_passed)
 
 		try:
-			project_module = import_module('homebot.modules.ci.projects.' + args.project, package="*")
+			project_module = import_module(f"homebot.modules.ci.projects.{args.project}", package="*")
 		except ImportError:
 			update.message.reply_text("Error: Project script not found")
 			return
