@@ -1,3 +1,4 @@
+from datetime import date
 from git.exc import GitCommandError
 from github import Github, GithubException
 from homebot import get_config
@@ -34,8 +35,10 @@ def ci_build(update: Update, context: CallbackContext):
 		build_description = devicetree.build_prop_reader.get_prop(BUILD_DESCRIPTION, "build description")
 		branch = build_description.replace(" ", "-")
 	except AssertionError:
-		status_message.edit_text("Failed to get build description prop")
-		return
+		status_message.edit_text("Failed to get build description prop, using date as a branch")
+		today = date.today()
+		build_description = None
+		branch = f"{today.year}-{today.month}-{today.day}"
 
 	# Upload to GitHub
 	status_message.edit_text("Pushing to GitHub...")
