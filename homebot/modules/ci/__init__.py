@@ -5,6 +5,8 @@ from homebot.core.admin import user_is_admin
 from homebot.core.logging import LOGE, LOGI
 from homebot.core.modules_manager import ModuleBase
 from homebot.modules.ci.parser import CIParser
+from homebot.modules.ci.queue_manager import queue_manager
+from homebot.modules.ci.workflow import Workflow
 from importlib import import_module
 from telegram.ext import CallbackContext
 from telegram.update import Update
@@ -27,10 +29,19 @@ class Module(ModuleBase):
 
 		parser = CIParser(prog="/ci")
 		parser.set_output(update.message.reply_text)
-		parser.add_argument('project', help='CI project')
+		parser.add_argument('project', help='CI project',
+							nargs='?', default=None,)
+		parser.add_argument('-s', '--status',
+							action='store_true', help='show queue status')
 
-		args_passed = update.message.text[len("/ci"):].split()
-		args, _ = parser.parse_known_args(args_passed)
+		args, _ = parser.parse_known_args(context.args)
+
+		if args.status:
+			update.message.reply_text(queue_manager.get_formatted_queue_list())
+			return
+
+		if args.project is None:
+			parser.error("Please specify a project")
 
 		try:
 			project_module = import_module(f"homebot.modules.ci.projects.{args.project}", package="*")
@@ -38,9 +49,10 @@ class Module(ModuleBase):
 			update.message.reply_text("Error: Project script not found")
 			return
 
-		LOGI("CI workflow started, project: " + args.project)
-		project_module.ci_build(update, context)
-		LOGI("CI workflow finished, project: " + args.project)
+		workflow = Workflow(project_module, update, context)
+		queue_manager.put(workflow)
+		update.message.reply_text("Workflow added to the queue")
+		LOGI("Workflow added to the queue")
 
 	commands = {
 		ci: ['ci']
