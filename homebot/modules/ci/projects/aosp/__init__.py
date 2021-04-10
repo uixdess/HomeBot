@@ -1,5 +1,6 @@
 """AOSP building CI module."""
 
+from datetime import datetime
 from homebot import bot_path, get_config
 from homebot.modules.ci.parser import CIParser
 from homebot.modules.ci.artifacts import Artifacts, STATUS_UPLOADING, STATUS_UPLOADED, STATUS_NOT_UPLOADED
@@ -9,6 +10,7 @@ from homebot.modules.ci.projects.aosp.returncode import SUCCESS, ERROR_CODES, NE
 from homebot.modules.ci.upload import Uploader
 from importlib import import_module
 from pathlib import Path
+import re
 import subprocess
 from telegram.ext import CallbackContext
 from telegram.update import Update
@@ -54,12 +56,34 @@ def ci_build(update: Update, context: CallbackContext):
 			   "--clean", clean_type,
 			   "--device", args.device]
 
-	try:
-		subprocess.check_output(command, stderr=subprocess.STDOUT, universal_newlines=True)
-	except subprocess.CalledProcessError as e:
-		returncode = e.returncode
-	else:
-		returncode = SUCCESS
+	last_edit = datetime.now()
+	process = subprocess.Popen(command, encoding="UTF-8",
+							   stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	while True:
+		output = process.stdout.readline()
+		if output == '' and process.poll() is not None:
+			break
+		if not output:
+			continue
+
+		now = datetime.now()
+		if (now - last_edit).seconds < 30:
+			continue
+
+		result = re.search(r"\[ +([0-9]+% [0-9]+/[0-9]+)\]", output.strip())
+		if result is None:
+			continue
+		result_split = str(result.group(1)).split()
+		if len(result_split) != 2:
+			continue
+
+		percentage, targets = re.split(" +", result.group(1))
+		update_ci_post(context, message_id, project, args.device,
+					   f"Building: {percentage} ({targets})")
+
+		last_edit = now
+
+	returncode = process.poll()
 
 	# Process return code
 	build_result = ERROR_CODES.get(returncode, "Build failed: Unknown error")
