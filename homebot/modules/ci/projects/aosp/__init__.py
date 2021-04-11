@@ -67,7 +67,7 @@ def ci_build(update: Update, context: CallbackContext):
 			continue
 
 		now = datetime.now()
-		if (now - last_edit).seconds < 30:
+		if (now - last_edit).seconds < 300:
 			continue
 
 		result = re.search(r"\[ +([0-9]+% [0-9]+/[0-9]+)\]", output.strip())
