@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail
+
 # Set return codes
 STATUS=(
 	"SUCCESS"
