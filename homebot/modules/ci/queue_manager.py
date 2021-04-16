@@ -1,3 +1,4 @@
+from homebot.core.error_handler import format_exception
 from homebot.core.logging import LOGE, LOGI
 from queue import Queue
 import threading
@@ -19,7 +20,8 @@ class QueueManager:
 			try:
 				self.current_workflow.run()
 			except Exception as e:
-				message = f"Unhandled exception from CI workflow: {type(e)}: {e}"
+				message = "Unhandled exception from CI workflow:"
+				message += format_exception(e)
 				LOGE(message)
 				self.current_workflow.update.message.reply_text(f"Error: {message}")
 			self.running = False

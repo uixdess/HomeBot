@@ -2,6 +2,7 @@
 
 from homebot import get_config
 from homebot.core.admin import user_is_admin
+from homebot.core.error_handler import format_exception
 from homebot.core.logging import LOGE, LOGI
 from homebot.core.modules_manager import ModuleBase
 from homebot.modules.ci.parser import CIParser
@@ -60,8 +61,10 @@ class Module(ModuleBase):
 		try:
 			project = project_class(update, context, project_args)
 		except Exception as e:
-			update.message.reply_text(f"Error: Project class initialization failed:\n"
-									  f"{type(e)}: {e}")
+			text = "Error: Project class initialization failed:\n"
+			text += format_exception(e)
+			update.message.reply_text(text)
+			LOGE(text)
 			return
 
 		workflow = Workflow(project)
