@@ -1,6 +1,0 @@
-name = "SHRP"
-category = "Recoveries"
-lunch_prefix = "omni"
-lunch_suffix = "userdebug"
-build_target = "recoveryimage"
-artifacts = "SHRP-*.zip"

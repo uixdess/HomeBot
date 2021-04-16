@@ -1,6 +1,0 @@
-name = "ProjectFluid"
-category = "ROMs"
-lunch_prefix = "fluid"
-lunch_suffix = "userdebug"
-build_target = "bacon"
-artifacts = "Fluid-*.zip"

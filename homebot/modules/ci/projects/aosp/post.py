@@ -1,19 +1,16 @@
 from homebot import get_config
 from homebot.modules.ci.artifacts import Artifacts
-from homebot.modules.ci.projects.aosp.project import AOSPProject
 from telegram.error import TimedOut
-from telegram.ext import CallbackContext
 
 chat_id = get_config("CI_CHANNEL_ID")
 
 class PostManager:
-	def __init__(self, context: CallbackContext, project: AOSPProject, device: str, artifacts: Artifacts):
-		self.context = context
+	def __init__(self, project, device: str, artifacts: Artifacts):
 		self.project = project
 		self.device = device
 		self.artifacts = artifacts
 		self.base_message_text = self.get_base_message_text()
-		self.message = self.context.bot.send_message(chat_id, self.base_message_text)
+		self.message = self.project.context.bot.send_message(chat_id, self.base_message_text)
 
 	def get_base_message_text(self):
 		text =  f"🛠 CI | {self.project.name} {self.project.version} ({self.project.android_version})\n"
