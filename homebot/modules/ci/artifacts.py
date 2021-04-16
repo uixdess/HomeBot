@@ -27,8 +27,10 @@ class Artifacts:
 		"""
 		self.pattern = pattern
 		self.path = path
+		self.artifacts = []
 
-		self.artifacts = [Artifact(artifact) for artifact in list(path.glob(pattern))]
+	def update(self):
+		self.artifacts = [Artifact(artifact) for artifact in list(self.path.glob(self.pattern))]
 
 	def get_artifacts_on_status(self, status: str):
 		return [i for i in self.artifacts if i.status == status]
