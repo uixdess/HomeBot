@@ -46,16 +46,15 @@ class Module(ModuleBase):
 			parser.error("Please specify a project")
 
 		try:
-			project_module = import_module(f"homebot.modules.ci.projects.{args.project}", package="*")
-		except ImportError:
-			update.message.reply_text("Error: Project script not found")
+			project_class = import_module(f"homebot.modules.ci.projects.{args.project}", package="Project").Project
+		except ModuleNotFoundError:
+			update.message.reply_text(f"Error: Project script not found")
 			return
-
-		try:
-			project_class: ProjectBase
-			project_class = project_module.Project
-		except Exception:
-			update.message.reply_text(f"Error: Project class not found")
+		except Exception as e:
+			text = "Error: Error while importing project:"
+			text += format_exception(e)
+			update.message.reply_text(text)
+			LOGE(text)
 			return
 
 		try:
