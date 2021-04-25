@@ -66,14 +66,14 @@ if [ "${CI_LUNCH_STATUS}" != 0 ]; then
 fi
 
 if [ "${CI_CLEAN}" != "" ] && [ "${CI_CLEAN}" != "none" ]; then
-	mka "${CI_CLEAN}" &> clean_log.txt
+	make "${CI_CLEAN}" &> clean_log.txt
 	CI_CLEAN_STATUS=$?
 	if [ "${CI_CLEAN_STATUS}" != 0 ]; then
 		exit "${CLEAN_FAILED}"
 	fi
 fi
 
-mka "${CI_BUILD_TARGET}" "-j$(nproc --all)" 2>&1 | tee build_log.txt
+make "${CI_BUILD_TARGET}" "-j$(nproc --all)" 2>&1 | tee build_log.txt
 CI_BUILD_STATUS=$?
 if [ ${CI_BUILD_STATUS} != 0 ]; then
 	exit "${BUILD_FAILED}"
