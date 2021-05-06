@@ -1,3 +1,5 @@
+"""DerpFest common CI project."""
+
 from homebot.modules.ci.projects.derpfest import DerpFestProject
 
 class Project(DerpFestProject):

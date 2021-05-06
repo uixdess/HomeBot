@@ -1,3 +1,5 @@
+"""dotOS common CI project."""
+
 from homebot.modules.ci.projects.dotos import dotOSProject
 
 class Project(dotOSProject):

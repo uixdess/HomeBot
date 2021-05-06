@@ -1,3 +1,5 @@
+"""dotOS R CI project."""
+
 from homebot.modules.ci.projects.aosp.project import AOSPProject
 
 class dotOSProject(AOSPProject):
