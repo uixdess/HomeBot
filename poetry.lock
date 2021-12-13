@@ -174,7 +174,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "natsort"
-version = "8.0.0"
+version = "8.0.1"
 description = "Simple yet flexible natural sorting in Python."
 category = "main"
 optional = false
@@ -558,8 +558,8 @@ markupsafe = [
     {file = "MarkupSafe-2.0.0rc2.tar.gz", hash = "sha256:746a22773b02c79ea570cf97f92aad7e58938bcd2670de499e349d8430f989ef"},
 ]
 natsort = [
-    {file = "natsort-8.0.0-py3-none-any.whl", hash = "sha256:5f5f4ea471d655b1b1611eef1cf0c6d3397095d2d3a1aab7098d6a50e4c3901a"},
-    {file = "natsort-8.0.0.tar.gz", hash = "sha256:a0a4fd71aee20a6d648da61e01180a63f7268e69983d0440bd3ad80ef1ba6981"},
+    {file = "natsort-8.0.1-py3-none-any.whl", hash = "sha256:c504a229c38926e047e9c3952a08920bc585efb62d7d160514ace9898b00ac0b"},
+    {file = "natsort-8.0.1.tar.gz", hash = "sha256:2e8fbc2b9e44ed7cbdf55d782375d706ba8742591c1c5910992542f3899abbed"},
 ]
 paramiko = [
     {file = "paramiko-2.8.1-py2.py3-none-any.whl", hash = "sha256:7b5910f5815a00405af55da7abcc8a9e0d9657f57fcdd9a89894fdbba1c6b8a8"},
