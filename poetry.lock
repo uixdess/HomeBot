@@ -439,14 +439,14 @@ icu = ["PyICU (>=1.0.0)"]
 
 [[package]]
 name = "paramiko"
-version = "3.0.0"
+version = "3.2.0"
 description = "SSH2 protocol library"
 category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "paramiko-3.0.0-py3-none-any.whl", hash = "sha256:6bef55b882c9d130f8015b9a26f4bd93f710e90fe7478b9dcc810304e79b3cd8"},
-    {file = "paramiko-3.0.0.tar.gz", hash = "sha256:fedc9b1dd43bc1d45f67f1ceca10bc336605427a46dcdf8dec6bfea3edf57965"},
+    {file = "paramiko-3.2.0-py3-none-any.whl", hash = "sha256:df0f9dd8903bc50f2e10580af687f3015bf592a377cd438d2ec9546467a14eb8"},
+    {file = "paramiko-3.2.0.tar.gz", hash = "sha256:93cdce625a8a1dc12204439d45033f3261bdb2c201648cfcdc06f9fd0f94ec29"},
 ]
 
 [package.dependencies]
@@ -742,4 +742,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "ad07cd2c1353e5c59dd62e793e9589b81a6fa317145ad6df0f81d5c008a08561"
+content-hash = "607fa01a3334921e852515bf8faa8c378720ceb6cbd73352dffab7726fbea721"
